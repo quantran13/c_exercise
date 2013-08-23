@@ -40,8 +40,7 @@ void b_to_d(char *x) {
 	printf("%d\n", kq);
 }
 
-void d_to_b(char *x)
-{
+void d_to_b(char *x) {
 	int bin[100], remain, dec, m, i;
 	float dec_2 = 1;
 	

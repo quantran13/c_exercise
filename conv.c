@@ -5,7 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-int lt(int num, int so_mu) {
+int lt(int num, int so_mu) 
+{
         int kq, i;
 
         kq = 1;
@@ -14,7 +15,8 @@ int lt(int num, int so_mu) {
         return kq;
 }
 
-int cs(int num) {
+int cs(int num) 
+{
         int kq;
 
         for (kq = 0; num != 0; kq++) num = num / 10;
@@ -22,7 +24,8 @@ int cs(int num) {
         return kq;
 }
 
-void b_to_d(char *x) {
+void b_to_d(char *x) 
+{
 	int bin[100], binary, m, i, remain, n, kq;
 	
 	kq = 0;
@@ -40,7 +43,8 @@ void b_to_d(char *x) {
 	printf("%d\n", kq);
 }
 
-void d_to_b(char *x) {
+void d_to_b(char *x) 
+{
 	int bin[100], remain, dec, m, i;
 	float dec_2 = 1;
 	
@@ -57,15 +61,14 @@ void d_to_b(char *x) {
 	printf("\n");
 }
 
-void usage() {
+void usage() 
+{
 	printf("Usage: ./conv [-db] [-bd] number.\n\n");
         printf("Options:\n       -db: Decimal to binary.\n\n       -bd: Binary to decimal.\n\n");
 }
 
-int main(int argc, char **argv) {
-	int i;
-	char *a, *b;
-
+int main(int argc, char **argv) 
+{
 	if (argc == 1) {
 		usage();
 		return 0;

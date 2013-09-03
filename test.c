@@ -9,7 +9,7 @@ int main(int argc, char **argv)
     char *buffer1, *buffer2;
 
 	buffer1 = (char *) malloc(8);
-	buffer2 = (char *) malloc(8);
+	buffer2 = (char *) malloc(8); 
 
     strcpy(buffer1, "ab");
     strcpy(buffer2, "456");

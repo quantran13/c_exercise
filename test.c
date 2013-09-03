@@ -6,7 +6,10 @@
 
 int main(int argc, char **argv)
 {
-    char buffer1[8], buffer2[8];
+    char *buffer1, *buffer2;
+
+	buffer1 = (char *) malloc(8);
+	buffer2 = (char *) malloc(8);
 
     strcpy(buffer1, "ab");
     strcpy(buffer2, "456");
@@ -22,6 +25,8 @@ int main(int argc, char **argv)
     printf("           Address            Value\n");
     printf("buffer1    %p         %s\n", buffer1, buffer1);
     printf("buffer2    %p         %s\n\n", buffer2, buffer2);
+
+	free(buffer1); free(buffer2);
 
     return 0;
 }

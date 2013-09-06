@@ -6,12 +6,13 @@ int main(int argc, char **argv)
 {
 	char *buffer;
 	
-	buffer = (char *) malloc(4096);
-	char *next = buffer + 4096;	
-	char *next_2 = buffer + 2048;
+	buffer = (char *) malloc(2048);
+	char *next = buffer + 2048;	
+	char *next_2 = buffer + 4096;
 	
-	strcpy(next, argv[1]); printf("Not the first one.\n");
-	strcpy(next_2, argv[1]); printf("Not the second one???\n");
+	printf("%p\n", &buffer);
+	strcpy(next, argv[1]); printf("Not the first one: %p\n", &next);
+	strcpy(next_2, argv[1]); printf("Not the second one: %p???\n", &next_2);
 
 	free(buffer);
 

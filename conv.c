@@ -7,24 +7,24 @@
 
 int lt(int num, int so_mu) 
 {
-        int kq, i;
+	int kq, i;
 
-        kq = 1;
-        for (i = 1; i <= so_mu; i++) kq = kq * num;
+	kq = 1;
+	for (i = 1; i <= so_mu; i++) kq = kq * num;
 
-        return kq;
+	return kq;
 }
 
 int cs(int num) 
 {
-        int kq;
+	int kq;
 
-        for (kq = 0; num != 0; kq++) num = num / 10;
+	for (kq = 0; num != 0; kq++) num = num / 10;
 
-        return kq;
+	return kq;
 }
 
-void b_to_d(char *x) 
+int b_to_d(char *x) 
 {
 	int bin[100], binary, m, i, remain, n, kq;
 	
@@ -37,10 +37,11 @@ void b_to_d(char *x)
 		bin[i] = remain;
 		binary = (binary - remain) / 10;
 	}
-	n = m;
 	
+	n = m;
 	for (i = 0; i <= m; i++, n--) kq = kq + bin[i] * lt(2, n);
-	printf("%d\n", kq);
+
+	return kq;
 }
 
 void d_to_b(char *x) 
@@ -61,21 +62,40 @@ void d_to_b(char *x)
 	printf("\n");
 }
 
+void b_to_h(char *x)
+{
+	int dec = b_to_d(x);
+
+	printf("%X\n", dec);
+}
+
+void d_to_h(char *x)
+{
+	int dec = atoi(x);
+	printf("%X\n", dec);
+}
+
 void usage() 
 {
-	printf("Usage: ./conv [-db] [-bd] number.\n\n");
-        printf("Options:\n       -db: Decimal to binary.\n\n       -bd: Binary to decimal.\n\n");
+	printf("Usage: ./conv [-db] [-bd] [-bh] [-dh] number.\n\n");
+	printf("Options:\n");
+	printf("        -db: Decimal to binary.\n\n");
+	printf("        -bd: Binary to decimal.\n\n");
+	printf("        -bh: Binary to hexadecimal.\n\n");
+	printf("        -dh: Decimal to hexadecimal.\n");
 }
 
 int main(int argc, char **argv) 
 {
 	if (argc == 1) {
 		usage();
-		return 0;
+		exit(1);
 	}
 	
 	if (!strcmp("-db", argv[1]) && argc == 3) d_to_b(argv[2]);
-	else if (!strcmp("-bd", argv[1]) && argc == 3) b_to_d(argv[2]);
+	else if (!strcmp("-bd", argv[1]) && argc == 3) printf("%d\n", b_to_d(argv[2]));
+	else if (!strcmp("-bh", argv[1]) && argc == 3) b_to_h(argv[2]);
+	else if (!strcmp("-dh", argv[1]) && argc == 3) d_to_h(argv[2]);
 	else usage();
 	
 	return 0;

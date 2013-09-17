@@ -22,7 +22,6 @@ int b_to_d(char *x)
 	char *remainderPtr;
 
 	binary = strtoll(x, &remainderPtr, 10);
-	printf("%lld\n", binary);
 	m = cs(binary) - 1;
 
 	for (i = m; i >= 0; i--) {

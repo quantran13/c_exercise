@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-int cs(int num) 
+int cs(long long int num) 
 {
 	int kq;
 
@@ -15,13 +15,14 @@ int cs(int num)
 	return kq;
 }
 
-long int b_to_d(char *x) 
+int b_to_d(char *x) 
 {
-	int bin[10000], binary, m, i, remain, n;
-	long int kq;
+	int bin[10000], m, i, n, kq;
+	long long int binary, remain;
+	char *remainderPtr;
 
-	kq = 0;
-	binary = atoi(x);
+	binary = strtoll(x, &remainderPtr, 10);
+	printf("%lld\n", binary);
 	m = cs(binary) - 1;
 
 	for (i = m; i >= 0; i--) {
@@ -70,11 +71,11 @@ void d_to_h(char *x)
 	printf("%X\n", dec);
 }
 
-long int h_to_d(char *x)
+long long int h_to_d(char *x)
 {
 	int kq, i = 0, dem = 0;
 	char ch;
-	long int dec = 0;
+	long long int dec = 0LL;
 
 	for (i = strlen(x)-1; i >= 0; i--) {
 		kq = 0;
@@ -96,10 +97,10 @@ long int h_to_d(char *x)
 
 void h_to_b(char *x)
 {
-	long int dec = h_to_d(x);
+	long long int dec = h_to_d(x);
 	char *dec_2 = (char *) malloc(100);
 
-	sprintf(dec_2, "%ld", dec);
+	sprintf(dec_2, "%lld", dec);
 	d_to_b(dec_2);
 
 	free(dec_2);
@@ -125,10 +126,10 @@ int main(int argc, char **argv)
 	}
 	
 	if (!strcmp("-db", argv[1]) && argc == 3) d_to_b(argv[2]);
-	else if (!strcmp("-bd", argv[1]) && argc == 3) printf("%ld\n", b_to_d(argv[2]));
+	else if (!strcmp("-bd", argv[1]) && argc == 3) printf("%d\n", b_to_d(argv[2]));
 	else if (!strcmp("-bh", argv[1]) && argc == 3) b_to_h(argv[2]);
 	else if (!strcmp("-dh", argv[1]) && argc == 3) d_to_h(argv[2]);
-	else if (!strcmp("-hd", argv[1]) && argc == 3) printf("%ld\n", h_to_d(argv[2]));
+	else if (!strcmp("-hd", argv[1]) && argc == 3) printf("%lld\n", h_to_d(argv[2]));
 	else if (!strcmp("-hb", argv[1]) && argc == 3) h_to_b(argv[2]);
 	else usage();
 	

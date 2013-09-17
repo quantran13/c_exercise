@@ -4,16 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-int lt(int num, int so_mu) 
-{
-	int kq, i;
-
-	kq = 1;
-	for (i = 1; i <= so_mu; i++) kq = kq * num;
-
-	return kq;
-}
+#include <math.h>
 
 int cs(int num) 
 {
@@ -24,10 +15,11 @@ int cs(int num)
 	return kq;
 }
 
-int b_to_d(char *x) 
+long int b_to_d(char *x) 
 {
-	int bin[100], binary, m, i, remain, n, kq;
-	
+	int bin[10000], binary, m, i, remain, n;
+	long int kq;
+
 	kq = 0;
 	binary = atoi(x);
 	m = cs(binary) - 1;
@@ -39,17 +31,19 @@ int b_to_d(char *x)
 	}
 	
 	n = m;
-	for (i = 0; i <= m; i++, n--) kq = kq + bin[i] * lt(2, n);
+	for (i = 0; i <= m; i++, n--) kq = kq + bin[i] * pow(2, n);
 
 	return kq;
 }
 
 void d_to_b(char *x) 
 {
-	int bin[100], remain, dec, m, i;
+	int bin[10000], remain, m, i;
+	long int dec;
 	float dec_2 = 1;
 	
 	dec = atoi(x);
+
 	for (m = 0; dec_2 >= 1; m++) {
 		dec_2 = (float)dec;
 		remain = dec % 2;
@@ -72,17 +66,55 @@ void b_to_h(char *x)
 void d_to_h(char *x)
 {
 	int dec = atoi(x);
+
 	printf("%X\n", dec);
+}
+
+long int h_to_d(char *x)
+{
+	int kq, i = 0, dem = 0;
+	char ch;
+	long int dec = 0;
+
+	for (i = strlen(x)-1; i >= 0; i--) {
+		kq = 0;
+		ch = x[i];
+		if (ch >= '0' && ch <= '9') 
+			kq = x[i] - '0';
+		else if (ch >= 'A' && ch <= 'F') 
+			kq = x[i] - 55;
+		else {
+			printf("Not a hexadecimal number\n");
+			exit(1);
+		}
+		dec += pow(16, dem) * kq;
+		dem++;
+	}
+
+	return dec;
+}
+
+void h_to_b(char *x)
+{
+	long int dec = h_to_d(x);
+	char *dec_2 = (char *) malloc(100);
+
+	sprintf(dec_2, "%ld", dec);
+	d_to_b(dec_2);
+
+	free(dec_2);
 }
 
 void usage() 
 {
-	printf("Usage: ./conv [-db] [-bd] [-bh] [-dh] number.\n\n");
+	printf("Usage: ./conv <option> <number>\n\n");
 	printf("Options:\n");
-	printf("        -db: Decimal to binary.\n\n");
-	printf("        -bd: Binary to decimal.\n\n");
-	printf("        -bh: Binary to hexadecimal.\n\n");
+	printf("        -db: Decimal to binary.\n");
+	printf("        -bd: Binary to decimal.\n");
+	printf("        -bh: Binary to hexadecimal.\n");
 	printf("        -dh: Decimal to hexadecimal.\n");
+	printf("        -hd: Hexadecimal to decimal.\n");
+	printf("        -hb: Hexadecimal to binary.\n");
 }
 
 int main(int argc, char **argv) 
@@ -93,9 +125,11 @@ int main(int argc, char **argv)
 	}
 	
 	if (!strcmp("-db", argv[1]) && argc == 3) d_to_b(argv[2]);
-	else if (!strcmp("-bd", argv[1]) && argc == 3) printf("%d\n", b_to_d(argv[2]));
+	else if (!strcmp("-bd", argv[1]) && argc == 3) printf("%ld\n", b_to_d(argv[2]));
 	else if (!strcmp("-bh", argv[1]) && argc == 3) b_to_h(argv[2]);
 	else if (!strcmp("-dh", argv[1]) && argc == 3) d_to_h(argv[2]);
+	else if (!strcmp("-hd", argv[1]) && argc == 3) printf("%ld\n", h_to_d(argv[2]));
+	else if (!strcmp("-hb", argv[1]) && argc == 3) h_to_b(argv[2]);
 	else usage();
 	
 	return 0;

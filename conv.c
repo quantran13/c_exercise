@@ -18,9 +18,10 @@ int cs(long long int num)
 int b_to_d(char *x) 
 {
 	int bin[10000], m, i, n, kq;
-	long long int binary, remain;
+	long long int binary = 0LL, remain = 0LL;
 	char *remainderPtr;
 
+	remainderPtr = (char *) malloc(sizeof(char)*20);
 	binary = strtoll(x, &remainderPtr, 10);
 	m = cs(binary) - 1;
 
@@ -32,6 +33,8 @@ int b_to_d(char *x)
 	
 	n = m;
 	for (i = 0; i <= m; i++, n--) kq = kq + bin[i] * pow(2, n);
+	
+	free(remainderPtr);
 
 	return kq;
 }

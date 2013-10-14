@@ -9,10 +9,9 @@
 
 void usage(char *program, char *fname)
 {
-	printf("Usage: %s <option> <data to add to %s>\n", program, fname);
-	printf("Option:\n");
-	printf("        -n: New note file.\n");
-	printf("        -a: Append data to note file.\n");
+	printf("Usage:\n");
+	printf("       %s <text>: add notes to %s\n", program, fname);
+	printf("       %s -d: delete %s\n", program, fname);
 	exit(0);
 }
 

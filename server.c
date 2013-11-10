@@ -23,7 +23,6 @@ int main(int argc, char **argv)
 	struct sockaddr_storage client_addr;
 	socklen_t addr_size;
 	char s[INET6_ADDRSTRLEN];
-	char *buf, *mes;
 	pid_t pid;
 	int sockfd, new_fd, status;
 	int yes=1;
@@ -74,9 +73,6 @@ int main(int argc, char **argv)
 	printf("Waiting for connection...\n");
 	
 	while (1) {
-		buf = (char *) malloc(100);
-		mes = (char *) malloc(20);
-
 		new_fd = accept(sockfd, (struct sockaddr *)&client_addr, &addr_size);
 		if (new_fd == -1) {
 			perror("accept");
@@ -92,8 +88,8 @@ int main(int argc, char **argv)
 			perror("fork");
 			continue;
 		} else if (pid == 0) {
-			buf = (char *) malloc(100);
-			mes = (char *) malloc(20);
+			char *buf = (char *) malloc(100);
+			char *mes = (char *) malloc(20);
 
 			if (recv(new_fd, buf, MAXDATARECV-1, 0) == -1)
 				perror("recv");

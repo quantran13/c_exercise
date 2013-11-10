@@ -24,6 +24,7 @@ int main(int argc, char **argv)
 	socklen_t addr_size;
 	char s[INET6_ADDRSTRLEN];
 	char *buf, *mes;
+	pid_t pid;
 	int sockfd, new_fd, status;
 	int yes=1;
 
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
 		perror("listen");
 		exit(1);
 	}
+	addr_size = sizeof(client_addr);
 
 	printf("Waiting for connection...\n");
 	
@@ -75,17 +77,24 @@ int main(int argc, char **argv)
 		buf = (char *) malloc(100);
 		mes = (char *) malloc(20);
 
-		addr_size = sizeof(client_addr);
 		new_fd = accept(sockfd, (struct sockaddr *)&client_addr, &addr_size);
 		if (new_fd == -1) {
-			//perror("accept");
+			perror("accept");
 			continue;
 		}
 
 		inet_ntop(client_addr.ss_family, &(((struct sockaddr_in*)&client_addr)->sin_addr), s, sizeof(s));
 		printf("server: got connection from %s\n", s);
 
-		if (!fork()) {
+		pid = fork();
+	
+		if (pid < 0) {
+			perror("fork");
+			continue;
+		} else if (pid == 0) {
+			buf = (char *) malloc(100);
+			mes = (char *) malloc(20);
+
 			if (recv(new_fd, buf, MAXDATARECV-1, 0) == -1)
 				perror("recv");
 
@@ -101,10 +110,10 @@ int main(int argc, char **argv)
 			close(new_fd);
 			printf("server: connection from %s closed\n", s);
 
-			exit(0);
-		}
+			free(buf); free(mes);
 
-		free(buf); free(mes);
+			_exit(0);
+		} else close(new_fd);
 	}
 	
 	close(sockfd);

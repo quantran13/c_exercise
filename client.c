@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	}
 
 	inet_ntop(p->ai_family, &(((struct sockaddr_in*)p->ai_addr)->sin_addr), s, sizeof s);
-    printf("client: connecting to %s\n", s);
+	printf("client: connecting to %s\n", s);
 
 	freeaddrinfo(res);
 

@@ -6,9 +6,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 void check(int status, char *mes)
 {
@@ -21,6 +24,7 @@ int main(int argc, char **argv)
 {
 	struct addrinfo hints, *res, *p;
 	int sockfd, bytes_sent;
+	char s[INET6_ADDRSTRLEN];
 	char *mes = (char *) malloc(100);
 	char *buf = (char *) malloc(4096);
 
@@ -54,6 +58,9 @@ int main(int argc, char **argv)
 		fprintf(stderr, "client: failed to connect\n");
 		return 2;
 	}
+
+	inet_ntop(p->ai_family, &(((struct sockaddr_in*)p->ai_addr)->sin_addr), s, sizeof s);
+    printf("client: connecting to %s\n", s);
 
 	freeaddrinfo(res);
 

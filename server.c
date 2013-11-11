@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <time.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,6 +18,52 @@
 #define PORT "1234"
 #define BACKLOG 10
 #define MAXDATARECV 100
+#define LOGFILE "server.log"
+
+int openlog()
+{
+	int fd;
+
+	fd = open(LOGFILE, O_WRONLY|O_CREAT|O_APPEND, S_IRUSR|S_IWUSR);
+	if (fd == -1) {	
+		close(fd);
+		perror("open log file");
+		return -1;
+	}
+
+	return fd;
+}
+
+char *logging(char *ip, char *buf, int fd)
+{
+	char *tmp = (char *) malloc(200);
+	char *t = (char *) malloc(100);
+	time_t lt;
+	int len;
+
+	lt = time(NULL);
+	strcpy(t, ctime(&lt));
+	len = strlen(t) - 6;
+	t[len] = '\0';
+
+	strcpy(tmp, ip); strcat(tmp, " - - ");
+	strcat(tmp, "["); strcat(tmp, t); strcat(tmp, "]  \"");
+	
+	strcat(tmp, buf); 
+	if (!strcmp(buf, "GET") || !strcmp(buf, "POST")) 
+		strcat(tmp, " 200 0\"");
+	else strcat(tmp, " 404 1\"");
+
+	strcat(tmp, "  \"-\"  \"-\"");
+	strcat(tmp, "\n\0");
+
+	if (write(fd, tmp, strlen(tmp)) == -1)
+		perror("write to log file");
+
+	free(tmp), free(t);
+
+	return tmp;
+}
 
 int main(int argc, char **argv)
 {
@@ -24,13 +72,18 @@ int main(int argc, char **argv)
 	socklen_t addr_size;
 	char s[INET6_ADDRSTRLEN];
 	pid_t pid;
-	int sockfd, new_fd, status;
+	int sockfd, new_fd, status, fd;
 	int yes=1;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
+
+	if ((fd = openlog()) == -1) {
+		printf("Error while opening log file");
+		exit(1);
+	}
 
 	if ((status = getaddrinfo(NULL, PORT, &hints, &res)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
@@ -79,7 +132,8 @@ int main(int argc, char **argv)
 			continue;
 		}
 
-		inet_ntop(client_addr.ss_family, &(((struct sockaddr_in*)&client_addr)->sin_addr), s, sizeof(s));
+		inet_ntop(client_addr.ss_family, &(((struct sockaddr_in*)&client_addr)->sin_addr), s, INET_ADDRSTRLEN);
+		int len = strlen(s); s[len+1] = '\0';
 		printf("server: got connection from %s\n", s);
 
 		pid = fork();
@@ -93,6 +147,9 @@ int main(int argc, char **argv)
 
 			if (recv(new_fd, buf, MAXDATARECV-1, 0) == -1)
 				perror("recv");
+		
+			len = strlen(buf);
+			if (buf[len-1] == '\n') buf[len-1] = '\0';
 
 			if (!strcmp(buf, "GET")) 
 				strcpy(mes, "GET successfully!\n");
@@ -105,6 +162,7 @@ int main(int argc, char **argv)
 				
 			close(new_fd);
 			printf("server: connection from %s closed\n", s);
+			logging(s, buf, fd);
 
 			free(buf); free(mes);
 
@@ -113,6 +171,7 @@ int main(int argc, char **argv)
 	}
 	
 	close(sockfd);
+	close(fd);
 
 	return 0;
 }
